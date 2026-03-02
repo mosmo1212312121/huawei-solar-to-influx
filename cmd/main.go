@@ -1,93 +1,76 @@
 package main
 
 import (
-	"context"
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	"github.com/gin-gonic/gin"
-	"github.com/mosmo1212312121/hexagonal_practice_go/internal/adapters/dtos"
-	"github.com/mosmo1212312121/hexagonal_practice_go/internal/adapters/handler"
-	"github.com/mosmo1212312121/hexagonal_practice_go/internal/adapters/repository"
-	"github.com/mosmo1212312121/hexagonal_practice_go/internal/core/service"
-	"github.com/mosmo1212312121/hexagonal_practice_go/internal/infrastructure"
-	"github.com/penglongli/gin-metrics/ginmetrics"
+	client "github.com/influxdata/influxdb1-client/v2"
+	"github.com/mosmo1212312121/huawei-solar-to-influx/internal/infrastructure"
+
+	"github.com/goburrow/modbus"
 )
 
 func main() {
-	r := gin.Default()
-	db, err := infrastructure.ConnectDB()
+
+	// InfluxDB
+	dbName := "my_database"
+	c, err := infrastructure.ConnectInflux()
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-	err = db.AutoMigrate(&repository.UserModel{})
-	if err != nil {
-		panic(err)
+	defer c.Close()
+
+	// --- Modbus TCP ---
+	handler := modbus.NewTCPClientHandler("127.0.0.1:10502")
+	handler.Timeout = 5 * time.Second
+	if err := handler.Connect(); err != nil {
+		log.Fatal("Modbus Error:", err)
 	}
-	// Health Check
-	// reg := prometheus.NewRegistry()
-	// reg.MustRegister(
-	// 	collectors.NewGoCollector(),
-	// 	collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}),
-	// )
-	m := ginmetrics.GetMonitor()
-	m.SetMetricPath("/metrics")
-	m.Use(r)
-	r.GET("/health", func(c *gin.Context) {
-		c.Header("Cache-Control", "no-cache, no-store, must-revalidate")
-		// check db connection
-		resp := dtos.HealthCheckResponse{}
-		sqlDB, err := db.DB()
+	defer handler.Close()
+	mbClient := modbus.NewClient(handler)
+
+	//
+
+	ticker := time.NewTicker(10 * time.Second)
+	for range ticker.C {
+		results, err := mbClient.ReadHoldingRegisters(0, 1)
 		if err != nil {
-			resp.Database = dtos.DOWN
-			c.JSON(http.StatusInternalServerError, resp)
-			return
+			log.Printf("Modbus Read Error: %v", err)
+			continue
 		}
-		if err := sqlDB.Ping(); err != nil {
-			resp.Database = dtos.DOWN
-			c.JSON(http.StatusInternalServerError, resp)
-			return
+
+		// แปลงค่า (สมมติว่าเป็น Integer 16-bit)
+		val := int16(results[0])<<8 | int16(results[1])
+
+		// --- 4. เขียนข้อมูลลง InfluxDB 1.8 ---
+		// สร้าง Batch Points
+		bp, _ := client.NewBatchPoints(client.BatchPointsConfig{
+			Database:  dbName,
+			Precision: "s", // วินาที
+		})
+
+		// สร้าง Point
+		tags := map[string]string{"device": "PLC01"}
+		fields := map[string]interface{}{"temperature": float64(val)}
+		pt, _ := client.NewPoint("sensor_data", tags, fields, time.Now())
+
+		bp.AddPoint(pt)
+
+		// เขียนข้อมูล
+		if err := c.Write(bp); err != nil {
+			log.Printf("InfluxDB Write Error: %v", err)
+		} else {
+			log.Printf("Data sent: %v", val)
 		}
-		resp.Status = dtos.UP
-		resp.Database = dtos.UP
-		c.JSON(http.StatusOK, resp)
-	})
-
-	userRepo := repository.NewUserRepository(db)
-	_ = userRepo
-	userService := service.NewUserService(userRepo)
-	userHandler := handler.NewUserHandler(r, userService)
-
-	ug := r.Group("users")
-	ug.POST("", userHandler.RegisterUser)
-	ug.GET("/:id", userHandler.GetUserByID)
-
-	//implement Graceful Shutdown
-	server := &http.Server{
-		Addr:    ":8080",
-		Handler: r,
 	}
-
-	go func() {
-		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("listen: %s\n", err)
-		}
-	}()
-
 	// Wait for interrupt signal to gracefully shut down
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	log.Println("Shutting down server...")
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	if err := server.Shutdown(ctx); err != nil {
-		log.Fatal("Server forced to shutdown:", err)
-	}
 	log.Println("Server exited")
 }

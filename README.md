@@ -1,1 +1,1 @@
-# hexagonal_practice_go
+# huawei-solar-to-influx
