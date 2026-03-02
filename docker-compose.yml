@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  go-app:
+    build: . # ชี้ไปที่โฟลเดอร์ที่มี Dockerfile ของคุณ
+    # image: my-go-app:latest  # หรือถ้า build เป็น image ไว้แล้ว ก็ใช้บรรทัดนี้แทน build
+    container_name: go-backend
+    networks:
+      - kong-net
+    ports:
+      - "8080:8080"
+    # ไม่ต้องเปิด ports ออกไปข้างนอกก็ได้ (ถ้าจะให้เรียกผ่าน Kong เท่านั้น)
+    # แต่ถ้าจะเปิดไว้ test แยก ก็ใส่ ports: ["8080:8080"]
+
+  kong:
+    image: kong:latest
+    container_name: kong-gateway
+    volumes:
+      - ./kong.yaml:/usr/local/kong/declarative/kong.yml
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /usr/local/kong/declarative/kong.yml
+      KONG_PROXY_LISTEN: 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    networks:
+      - kong-net
+    depends_on:
+      - go-app
+
+networks:
+  kong-net:
+    driver: bridge
