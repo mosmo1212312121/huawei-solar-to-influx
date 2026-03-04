@@ -1,33 +1,42 @@
-version: "3.8"
-
 services:
-  go-app:
-    build: . # ชี้ไปที่โฟลเดอร์ที่มี Dockerfile ของคุณ
-    # image: my-go-app:latest  # หรือถ้า build เป็น image ไว้แล้ว ก็ใช้บรรทัดนี้แทน build
-    container_name: go-backend
+  huawei-solar-to-influx:
+    build: ./
+    container_name: huawei-solar-to-influx
     networks:
-      - kong-net
+      - solar-monitor
     ports:
       - "8080:8080"
-    # ไม่ต้องเปิด ports ออกไปข้างนอกก็ได้ (ถ้าจะให้เรียกผ่าน Kong เท่านั้น)
-    # แต่ถ้าจะเปิดไว้ test แยก ก็ใส่ ports: ["8080:8080"]
-
-  kong:
-    image: kong:latest
-    container_name: kong-gateway
-    volumes:
-      - ./kong.yaml:/usr/local/kong/declarative/kong.yml
-    environment:
-      KONG_DATABASE: "off"
-      KONG_DECLARATIVE_CONFIG: /usr/local/kong/declarative/kong.yml
-      KONG_PROXY_LISTEN: 0.0.0.0:8000
-    ports:
-      - "8000:8000"
-    networks:
-      - kong-net
     depends_on:
-      - go-app
-
+      - influxdb
+    environment:
+      - MODBUS_ADDR=${MODBUS_ADDR}
+      - MODBUS_TIMEOUT_SECONDS=${MODBUS_TIMEOUT_SECONDS}
+      - MODBUS_RECONNECT_WAIT_SECONDS=${MODBUS_RECONNECT_WAIT_SECONDS}
+      - INFLUX_URL=${INFLUX_URL}
+      - INFLUX_DB=${INFLUX_DB}
+      - INFLUX_DEVICE_TAG=${INFLUX_DEVICE_TAG}
+      - INFLUX_MEASUREMENT=${INFLUX_MEASUREMENT}
+      - APP_POLL_INTERVAL_SECONDS=${APP_POLL_INTERVAL_SECONDS}
+  influxdb:
+    image: influxdb:1.8
+    container_name: influxdb
+    networks:
+      - solar-monitor
+    ports:
+      - "8086:8086"
+    volumes:
+      - ./data/influxdb:/var/lib/influxdb
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    networks:
+      - solar-monitor
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data/grafana:/var/lib/grafana
+    depends_on:
+      - influxdb
 networks:
-  kong-net:
+  solar-monitor:
     driver: bridge

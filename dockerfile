@@ -1,11 +1,19 @@
-FROM golang:1.25-alpine AS build
+FROM --platform=$BUILDPLATFORM golang:1.25-alpine AS build
+
+ARG TARGETOS
+ARG TARGETARCH
+ARG TARGETVARIANT
 
 WORKDIR /app
 
 COPY . .
 RUN go mod download
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./bin/practice ./cmd/main.go
+RUN CGO_ENABLED=0 \
+    GOOS=${TARGETOS} \
+    GOARCH=${TARGETARCH} \
+    GOARM=$(echo ${TARGETVARIANT} | tr -d 'v') \
+    go build -o ./bin/huawei-solar-to-influx ./cmd/main.go
 
 
 FROM alpine:latest AS final
@@ -13,8 +21,6 @@ LABEL maintainer="mosmo"
 
 WORKDIR /app
 
-COPY --from=build /app/bin/practice ./
+COPY --from=build /app/bin/huawei-solar-to-influx ./
 
-EXPOSE 8080
-
-ENTRYPOINT [ "./practice" ]
+ENTRYPOINT [ "./huawei-solar-to-influx" ]
