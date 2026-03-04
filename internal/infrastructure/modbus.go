@@ -21,6 +21,7 @@ func ConnectModbus(cfg config.ModbusConfig) (*ModbusClient, error) {
 	if err := handler.Connect(); err != nil {
 		return nil, err
 	}
+	log.Println("Modbus connected successfully")
 	return &ModbusClient{
 		cfg:     cfg,
 		handler: handler,
