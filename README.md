@@ -116,7 +116,7 @@ Services :
 Pre-built images are published to GitHub Container Registry on every version tag.
 
 ```bash
-docker pull ghcr.io/<your-org>/huawei-solar-to-influx:latest
+docker pull ghcr.io/mosmo1212312121/huawei-solar-to-influx:latest
 ```
 
 **Supported platforms:** `linux/amd64` · `linux/arm64` · `linux/arm/v7`
