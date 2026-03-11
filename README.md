@@ -18,20 +18,19 @@ huawei-solar-to-influx  ──►  InfluxDB 1.8  ──►  Grafana
 
 ## Metrics Collected
 
-| Field                 | Register  | Unit | Description                                  |
-| --------------------- | --------- | ---- | -------------------------------------------- |
-| PV1 Input Voltage     | 32016     | V    | PV string 1 voltage                          |
-| PV1 Input Current     | 32017     | A    | PV string 1 current                          |
-| PV Power              | 32064     | W    | Total PV input power                         |
-| Inverter Power        | 32080     | W    | AC output power from inverter                |
-| Line Voltage A        | 37101     | V    | Grid voltage phase A                         |
-| Phase A Current       | 37107     | A    | Grid current phase A                         |
-| Active Power meter    | 37113     | W    | Grid meter power (− = from grid, + = export) |
-| Power Factor          | 37117     | —    | Grid power factor                            |
-| Grid Frequency        | 37118     | Hz   | Grid frequency                               |
-| Dera Rating           | 40125     | %    | Active power derating percentage             |
-| **Load Power**        | _derived_ | W    | `Inverter Power − Active Power meter`        |
-| **Dera Rating Watts** | _derived_ | W    | `Inverter Power × Dera Rating / 100`         |
+| Field              | Register  | Unit | Description                                  |
+| ------------------ | --------- | ---- | -------------------------------------------- |
+| PV1 Input Voltage  | 32016     | V    | PV string 1 voltage                          |
+| PV1 Input Current  | 32017     | A    | PV string 1 current                          |
+| PV Power           | 32064     | W    | Total PV input power                         |
+| Inverter Power     | 32080     | W    | AC output power from inverter                |
+| Line Voltage A     | 37101     | V    | Grid voltage phase A                         |
+| Phase A Current    | 37107     | A    | Grid current phase A                         |
+| Active Power meter | 37113     | W    | Grid meter power (− = from grid, + = export) |
+| Power Factor       | 37117     | —    | Grid power factor                            |
+| Grid Frequency     | 37118     | Hz   | Grid frequency                               |
+| Dera Rating        | 40125     | %    | Active power derating percentage             |
+| **Load Power**     | _derived_ | W    | `Inverter Power − Active Power meter`        |
 
 ---
 
