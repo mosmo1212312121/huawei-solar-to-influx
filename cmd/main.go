@@ -111,9 +111,9 @@ func main() {
 			fields["Load Power"] = loadPower
 
 			// Calculate Dera Rating
-			deraRatingPercentage := fields[utils.DeraRating.Desc].(float64)
-			deraRatingWatts := deraRatingToWatts(deraRatingPercentage, inverterPower)
-			fields["DeraRatingWatts"] = deraRatingWatts
+			// deraRatingPercentage := fields[utils.DeraRating.Desc].(float64)
+			// deraRatingWatts := deraRatingToWatts(deraRatingPercentage, inverterPower)
+			// fields["DeraRatingWatts"] = deraRatingWatts
 
 			tags := map[string]string{"device": cfg.Influx.DeviceTag}
 			pt, err := client.NewPoint(cfg.Influx.Measurement, tags, fields, time.Now())
@@ -137,8 +137,9 @@ func calcLoadPower(inverterPower, activePowerMeter float64) float64 {
 	return loadPower
 }
 
-func deraRatingToWatts(deraRatingPercentage float64, inverterPower float64) float64 {
-	deraRatingWatts := inverterPower * deraRatingPercentage / 100
-	log.Printf("  %-25s = %.4f %s", "Dera Rating", deraRatingWatts, "W")
-	return deraRatingWatts
-}
+// Comment out for now, derating is not correct
+// func deraRatingToWatts(deraRatingPercentage float64, inverterPower float64) float64 {
+// 	deraRatingWatts := inverterPower * deraRatingPercentage / 100
+// 	log.Printf("  %-25s = %.4f %s", "Dera Rating", deraRatingWatts, "W")
+// 	return deraRatingWatts
+// }
