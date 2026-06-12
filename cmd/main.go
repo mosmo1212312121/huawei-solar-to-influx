@@ -35,16 +35,73 @@ func main() {
 
 	// --- Registers to poll ---
 	registers := []utils.ModbusRegister{
+		// State / Alarm
 		utils.MeterStatus,
+		utils.DeviceStatus,
+		utils.FaultCode,
+		utils.InverterAlarm1,
+		utils.InverterAlarm2,
+		utils.InverterAlarm3,
+
+		// PV Input
 		utils.PV1Voltage,
 		utils.PV1Current,
+		utils.PV2Voltage,
+		utils.PV2Current,
+		utils.PV3Voltage,
+		utils.PV3Current,
+		utils.PV4Voltage,
+		utils.PV4Current,
 		utils.PVPower,
+
+		// Inverter Output
+		utils.InverterVoltageAB,
+		utils.InverterVoltageBC,
+		utils.InverterVoltageCA,
+		utils.InverterVoltageA,
+		utils.InverterVoltageB,
+		utils.InverterVoltageC,
+		utils.InverterCurrentA,
+		utils.InverterCurrentB,
+		utils.InverterCurrentC,
+		utils.PeakActivePowerDay,
+		utils.InverterPower,
+		utils.InverterReactivePwr,
+		utils.InverterPowerFactor,
+		utils.InverterFreq,
+		utils.InverterEfficiency,
+		utils.InternalTemperature,
+		utils.InsulationResistance,
+
+		// Energy Yield
+		utils.AccumulatedEnergyYield,
+		utils.DailyEnergyYield,
+
+		// Grid (Power Meter)
 		utils.LineVoltageA,
+		utils.LineVoltageB,
+		utils.LineVoltageC,
 		utils.PhaseACurrent,
+		utils.PhaseBCurrent,
+		utils.PhaseCCurrent,
 		utils.ActivePowerMeter,
+		utils.ReactivePowerMeter,
 		utils.PowerFactor,
 		utils.GridFreq,
-		utils.InverterPower,
+		utils.GridExportedEnergy,
+		utils.GridImportedEnergy,
+		utils.GridActivePowerA,
+		utils.GridActivePowerB,
+		utils.GridActivePowerC,
+
+		// Battery / Energy Storage (LUNA2000)
+		utils.BatteryRunningStatus,
+		utils.BatteryChargePower,
+		utils.BatterySOC,
+		utils.BatteryTotalCharge,
+		utils.BatteryTotalDischarge,
+
+		// Settings
 		utils.DeraRating,
 	}
 
@@ -71,22 +128,33 @@ func main() {
 
 		case <-ticker.C:
 			fields := make(map[string]interface{})
-			hasError := false
+			connLost := false
 
 			for _, reg := range registers {
 				val, err := infrastructure.ReadRegister(mbClient.Client, reg)
 				if err != nil {
+					// Skip this register. A register can be absent on this model
+					// (e.g. battery registers without a LUNA2000) — don't abort the
+					// whole round. Reconnect only if the connection itself dropped.
 					log.Printf("Modbus read error [%s addr=%d]: %v", reg.Desc, reg.Address, err)
-					hasError = true
-					mbClient.Reconnect()
-					break
+					if infrastructure.IsConnError(err) {
+						connLost = true
+						mbClient.Reconnect()
+						break
+					}
+					continue
+				}
+				// Skip missing/zero values — don't store them in InfluxDB.
+				if val == 0 {
+					log.Printf("  %-25s = 0 %s (skipped)", reg.Desc, reg.Unit)
+					continue
 				}
 				fields[reg.Desc] = val
 				log.Printf("  %-25s = %.4f %s", reg.Desc, val, reg.Unit)
 			}
 
-			if hasError {
-				log.Println("Read error occurred — skipping write, will retry next poll")
+			if connLost {
+				log.Println("Connection lost — skipping write, will retry next poll")
 				continue
 			}
 			if len(fields) == 0 {
@@ -104,16 +172,13 @@ func main() {
 				continue
 			}
 
-			// Calculate Load Power
-			inverterPower := fields[utils.InverterPower.Desc].(float64)
-			activePowerMeter := fields[utils.ActivePowerMeter.Desc].(float64)
-			loadPower := calcLoadPower(inverterPower, activePowerMeter)
-			fields["Load Power"] = loadPower
-
-			// Calculate Dera Rating
-			// deraRatingPercentage := fields[utils.DeraRating.Desc].(float64)
-			// deraRatingWatts := deraRatingToWatts(deraRatingPercentage, inverterPower)
-			// fields["DeraRatingWatts"] = deraRatingWatts
+			// Calculate Load Power (only if both inputs were read this round)
+			inverterPower, okInv := fields[utils.InverterPower.Desc].(float64)
+			activePowerMeter, okMeter := fields[utils.ActivePowerMeter.Desc].(float64)
+			if okInv && okMeter {
+				loadPower := calcLoadPower(inverterPower, activePowerMeter)
+				fields["Load Power"] = loadPower
+			}
 
 			tags := map[string]string{"device": cfg.Influx.DeviceTag}
 			pt, err := client.NewPoint(cfg.Influx.Measurement, tags, fields, time.Now())
@@ -136,10 +201,3 @@ func calcLoadPower(inverterPower, activePowerMeter float64) float64 {
 	log.Printf("  %-25s = %.4f %s", "Load Power", loadPower, "W")
 	return loadPower
 }
-
-// Comment out for now, derating is not correct
-// func deraRatingToWatts(deraRatingPercentage float64, inverterPower float64) float64 {
-// 	deraRatingWatts := inverterPower * deraRatingPercentage / 100
-// 	log.Printf("  %-25s = %.4f %s", "Dera Rating", deraRatingWatts, "W")
-// 	return deraRatingWatts
-// }

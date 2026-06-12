@@ -1,6 +1,7 @@
 package infrastructure
 
 import (
+	"errors"
 	"log"
 	"time"
 
@@ -47,6 +48,18 @@ func (m *ModbusClient) Reconnect() {
 
 func (m *ModbusClient) Close() {
 	_ = m.handler.Close()
+}
+
+// IsConnError reports whether err is a transport/connection failure (timeout,
+// EOF, reset) rather than a Modbus protocol exception. A *modbus.ModbusError
+// means the device answered but rejected the request — e.g. the register does
+// not exist on this model — so the connection is fine and we should not reconnect.
+func IsConnError(err error) bool {
+	if err == nil {
+		return false
+	}
+	var modbusErr *modbus.ModbusError
+	return !errors.As(err, &modbusErr)
 }
 
 func ReadRegister(c modbus.Client, reg utils.ModbusRegister) (float64, error) {
