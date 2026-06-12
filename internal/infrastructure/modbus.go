@@ -3,6 +3,7 @@ package infrastructure
 import (
 	"errors"
 	"log"
+	"math"
 	"time"
 
 	"github.com/goburrow/modbus"
@@ -74,6 +75,11 @@ func ReadRegister(c modbus.Client, reg utils.ModbusRegister) (float64, error) {
 		intVal = int64(utils.ToInt32(raw))
 	default: // 1 register → int16
 		intVal = int64(utils.ToInt16(raw))
+	}
+
+	// 0x7FFFFFFF / 0x7FFF = Huawei sentinel for "data not available"
+	if intVal == math.MaxInt32 || intVal == math.MaxInt16 {
+		return 0, nil
 	}
 
 	if reg.Gain == 0 {
