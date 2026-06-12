@@ -18,19 +18,99 @@ huawei-solar-to-influx  ──►  InfluxDB 1.8  ──►  Grafana
 
 ## Metrics Collected
 
-| Field              | Register  | Unit | Description                                  |
-| ------------------ | --------- | ---- | -------------------------------------------- |
-| PV1 Input Voltage  | 32016     | V    | PV string 1 voltage                          |
-| PV1 Input Current  | 32017     | A    | PV string 1 current                          |
-| PV Power           | 32064     | W    | Total PV input power                         |
-| Inverter Power     | 32080     | W    | AC output power from inverter                |
-| Line Voltage A     | 37101     | V    | Grid voltage phase A                         |
-| Phase A Current    | 37107     | A    | Grid current phase A                         |
-| Active Power meter | 37113     | W    | Grid meter power (− = from grid, + = export) |
-| Power Factor       | 37117     | —    | Grid power factor                            |
-| Grid Frequency     | 37118     | Hz   | Grid frequency                               |
-| Dera Rating        | 40125     | %    | Active power derating percentage             |
-| **Load Power**     | _derived_ | W    | `Inverter Power − Active Power meter`        |
+
+Register definitions [`internal/utils/register.go`](internal/utils/register.go).
+
+### State / Alarm
+
+| Field           | Register | Unit | Description                                          |
+| --------------- | -------- | ---- | ---------------------------------------------------- |
+| Meter Status    | 37100    | —    | Power meter status                                   |
+| Device Status   | 32089    | —    | Inverter status (0x0000 standby, 0x0200 on-grid, …)  |
+| Fault Code      | 32090    | —    | Inverter fault code                                  |
+| Inverter Alarm 1| 32008    | —    | Alarm bitfield 1                                     |
+| Inverter Alarm 2| 32009    | —    | Alarm bitfield 2                                     |
+| Inverter Alarm 3| 32010    | —    | Alarm bitfield 3                                     |
+
+### PV Input
+
+| Field             | Register | Unit | Description           |
+| ----------------- | -------- | ---- | --------------------- |
+| PV1 Input Voltage | 32016    | V    | PV string 1 voltage   |
+| PV1 Input Current | 32017    | A    | PV string 1 current   |
+| PV2 Input Voltage | 32018    | V    | PV string 2 voltage   |
+| PV2 Input Current | 32019    | A    | PV string 2 current   |
+| PV3 Input Voltage | 32020    | V    | PV string 3 voltage   |
+| PV3 Input Current | 32021    | A    | PV string 3 current   |
+| PV4 Input Voltage | 32022    | V    | PV string 4 voltage   |
+| PV4 Input Current | 32023    | A    | PV string 4 current   |
+| PV Power          | 32064    | W    | Total PV input power  |
+
+### Inverter Output
+
+| Field                  | Register | Unit | Description                  |
+| ---------------------- | -------- | ---- | ---------------------------- |
+| Inverter Voltage A-B   | 32066    | V    | Line-to-line voltage A-B     |
+| Inverter Voltage B-C   | 32067    | V    | Line-to-line voltage B-C     |
+| Inverter Voltage C-A   | 32068    | V    | Line-to-line voltage C-A     |
+| Inverter Phase A Voltage | 32069  | V    | Phase A voltage              |
+| Inverter Phase B Voltage | 32070  | V    | Phase B voltage              |
+| Inverter Phase C Voltage | 32071  | V    | Phase C voltage              |
+| Inverter Phase A Current | 32072  | A    | Phase A current              |
+| Inverter Phase B Current | 32074  | A    | Phase B current              |
+| Inverter Phase C Current | 32076  | A    | Phase C current              |
+| Peak Active Power of Day | 32078  | W    | Peak active power today      |
+| Inverter Power         | 32080    | W    | AC output power from inverter|
+| Inverter Reactive Power| 32082    | kvar | Reactive power               |
+| Inverter Power Factor  | 32084    | —    | Inverter power factor        |
+| Inverter Frequency     | 32085    | Hz   | Inverter output frequency    |
+| Inverter Efficiency    | 32086    | %    | Conversion efficiency        |
+| Internal Temperature   | 32087    | °C   | Internal temperature         |
+| Insulation Resistance  | 32088    | MΩ   | Insulation resistance        |
+
+### Energy Yield
+
+| Field                    | Register | Unit | Description                  |
+| ------------------------ | -------- | ---- | ---------------------------- |
+| Accumulated Energy Yield | 32106    | kWh  | Lifetime energy produced     |
+| Daily Energy Yield       | 32114    | kWh  | Energy produced today        |
+
+### Grid (Power Meter)
+
+| Field                    | Register | Unit | Description                                  |
+| ------------------------ | -------- | ---- | -------------------------------------------- |
+| Line Voltage A           | 37101    | V    | Grid voltage phase A                         |
+| Line Voltage B           | 37103    | V    | Grid voltage phase B                         |
+| Line Voltage C           | 37105    | V    | Grid voltage phase C                         |
+| Phase A Current          | 37107    | A    | Grid current phase A                         |
+| Phase B Current          | 37109    | A    | Grid current phase B                         |
+| Phase C Current          | 37111    | A    | Grid current phase C                         |
+| Active Power meter       | 37113    | W    | Grid meter power (− = from grid, + = export) |
+| Reactive Power meter     | 37115    | var  | Grid reactive power                          |
+| Power Factor             | 37117    | —    | Grid power factor                            |
+| Grid Frequency           | 37118    | Hz   | Grid frequency                               |
+| Grid Exported Energy     | 37119    | kWh  | Cumulative energy exported to grid           |
+| Grid Imported Energy     | 37121    | kWh  | Cumulative energy imported from grid         |
+| Grid Phase A Active Power| 37132    | W    | Grid active power phase A                     |
+| Grid Phase B Active Power| 37134    | W    | Grid active power phase B                     |
+| Grid Phase C Active Power| 37136    | W    | Grid active power phase C                     |
+
+### Battery / Energy Storage (LUNA2000)
+
+| Field                          | Register | Unit | Description                                     |
+| ------------------------------ | -------- | ---- | ----------------------------------------------- |
+| Battery SOC                    | 37760    | %    | State of charge                                 |
+| Battery Running Status         | 37762    | —    | 0 offline · 1 standby · 2 running · 3 fault · 4 sleep |
+| Battery Charge/Discharge Power | 37765    | W    | + = charging, − = discharging                   |
+| Battery Total Charge           | 37780    | kWh  | Cumulative energy charged                       |
+| Battery Total Discharge        | 37782    | kWh  | Cumulative energy discharged                    |
+
+### Settings & Derived
+
+| Field          | Register  | Unit | Description                           |
+| -------------- | --------- | ---- | ------------------------------------- |
+| Dera Rating    | 40125     | %    | Active power derating percentage      |
+| **Load Power** | _derived_ | W    | `Inverter Power − Active Power meter` |
 
 ---
 
@@ -60,15 +140,15 @@ Services :
 
 ### 3. Import Grafana Dashboard
 
-1. เปิด Grafana → **Dashboards → Import**
-2. Upload ไฟล์ `grafana_dashboard/solar_monitor.json`
-3. เลือก InfluxDB datasource → **Import**
+1. Open Grafana → **Dashboards → Import**
+2. Upload the `grafana_dashboard/solar_monitor.json` file
+3. Select the InfluxDB datasource → **Import**
 
 ---
 
 ## Configuration
 
-ค่า config ทั้งหมดอ่านจาก `.env` หรือ environment variable โดยตรง
+All configuration is read directly from `.env` or environment variables.
 
 | Variable                        | Default                   | Description            |
 | ------------------------------- | ------------------------- | ---------------------- |
