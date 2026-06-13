@@ -148,10 +148,10 @@ func main() {
 				log.Println("Connection lost — skipping write, will retry next poll")
 				continue
 			}
-			if len(fields) == 0 {
-				log.Println("No data collected, skipping write")
-				continue
-			}
+			// if len(fields) == 0 {
+			// 	log.Println("No data collected, skipping write")
+			// 	continue
+			// }
 
 			// --- Write to InfluxDB ---
 			bp, err := client.NewBatchPoints(client.BatchPointsConfig{
