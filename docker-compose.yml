@@ -1,22 +1,13 @@
 services:
   huawei-solar-to-influx:
-    build: ./
+    image: ghcr.io/mosmo1212312121/huawei-solar-to-influx:latest
     container_name: huawei-solar-to-influx
     networks:
       - solar-monitor
-    ports:
-      - "8080:8080"
+    env_file:
+      - .env
     depends_on:
       - influxdb
-    environment:
-      - MODBUS_ADDR=${MODBUS_ADDR}
-      - MODBUS_TIMEOUT_SECONDS=${MODBUS_TIMEOUT_SECONDS}
-      - MODBUS_RECONNECT_WAIT_SECONDS=${MODBUS_RECONNECT_WAIT_SECONDS}
-      - INFLUX_URL=${INFLUX_URL}
-      - INFLUX_DB=${INFLUX_DB}
-      - INFLUX_DEVICE_TAG=${INFLUX_DEVICE_TAG}
-      - INFLUX_MEASUREMENT=${INFLUX_MEASUREMENT}
-      - APP_POLL_INTERVAL_SECONDS=${APP_POLL_INTERVAL_SECONDS}
   influxdb:
     image: influxdb:1.8
     container_name: influxdb

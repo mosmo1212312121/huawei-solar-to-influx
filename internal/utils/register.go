@@ -30,12 +30,6 @@ var (
 	PVPower    = ModbusRegister{32064, 2, 1, "W", "PV Power"}            // int32
 
 	// Inverter Output
-	InverterVoltageAB    = ModbusRegister{32066, 1, 10, "V", "Inverter Voltage A-B"}         // uint16
-	InverterVoltageBC    = ModbusRegister{32067, 1, 10, "V", "Inverter Voltage B-C"}         // uint16
-	InverterVoltageCA    = ModbusRegister{32068, 1, 10, "V", "Inverter Voltage C-A"}         // uint16
-	InverterVoltageA     = ModbusRegister{32069, 1, 10, "V", "Inverter Phase A Voltage"}     // uint16
-	InverterVoltageB     = ModbusRegister{32070, 1, 10, "V", "Inverter Phase B Voltage"}     // uint16
-	InverterVoltageC     = ModbusRegister{32071, 1, 10, "V", "Inverter Phase C Voltage"}     // uint16
 	InverterCurrentA     = ModbusRegister{32072, 2, 1000, "A", "Inverter Phase A Current"}   // int32
 	InverterCurrentB     = ModbusRegister{32074, 2, 1000, "A", "Inverter Phase B Current"}   // int32
 	InverterCurrentC     = ModbusRegister{32076, 2, 1000, "A", "Inverter Phase C Current"}   // int32
@@ -53,21 +47,18 @@ var (
 	DailyEnergyYield       = ModbusRegister{32114, 2, 100, "kWh", "Daily Energy Yield"}       // uint32 พลังงานที่ผลิตได้วันนี้
 
 	// Grid (Power Meter)
-	LineVoltageA       = ModbusRegister{37101, 2, 10, "V", "Line Voltage A"}           // int32
-	LineVoltageB       = ModbusRegister{37103, 2, 10, "V", "Line Voltage B"}           // int32
-	LineVoltageC       = ModbusRegister{37105, 2, 10, "V", "Line Voltage C"}           // int32
-	PhaseACurrent      = ModbusRegister{37107, 2, 100, "A", "Phase A Current"}         // int32
-	PhaseBCurrent      = ModbusRegister{37109, 2, 100, "A", "Phase B Current"}         // int32
-	PhaseCCurrent      = ModbusRegister{37111, 2, 100, "A", "Phase C Current"}         // int32
-	ActivePowerMeter   = ModbusRegister{37113, 2, 1, "W", "Active Power meter"}        // int32 ไฟที่ meter grid มาถ้า - คือจาก grid + คือย้อนออก
-	ReactivePowerMeter = ModbusRegister{37115, 2, 1, "var", "Reactive Power meter"}    // int32
-	PowerFactor        = ModbusRegister{37117, 1, 1000, "", "Power Factor"}            // int16
-	GridFreq           = ModbusRegister{37118, 1, 100, "Hz", "Grid Frequency"}         // int16
-	GridExportedEnergy = ModbusRegister{37119, 2, 100, "kWh", "Grid Exported Energy"}  // int32 พลังงานที่ขายออก grid สะสม
-	GridImportedEnergy = ModbusRegister{37121, 2, 100, "kWh", "Grid Imported Energy"}  // int32 พลังงานที่ซื้อจาก grid สะสม
-	GridActivePowerA   = ModbusRegister{37132, 2, 1, "W", "Grid Phase A Active Power"} // int32
-	GridActivePowerB   = ModbusRegister{37134, 2, 1, "W", "Grid Phase B Active Power"} // int32
-	GridActivePowerC   = ModbusRegister{37136, 2, 1, "W", "Grid Phase C Active Power"} // int32
+	LineVoltageA       = ModbusRegister{37101, 2, 10, "V", "Line Voltage A"}          // int32
+	LineVoltageB       = ModbusRegister{37103, 2, 10, "V", "Line Voltage B"}          // int32
+	LineVoltageC       = ModbusRegister{37105, 2, 10, "V", "Line Voltage C"}          // int32
+	PhaseACurrent      = ModbusRegister{37107, 2, 100, "A", "Phase A Current"}        // int32
+	PhaseBCurrent      = ModbusRegister{37109, 2, 100, "A", "Phase B Current"}        // int32
+	PhaseCCurrent      = ModbusRegister{37111, 2, 100, "A", "Phase C Current"}        // int32
+	ActivePowerMeter   = ModbusRegister{37113, 2, 1, "W", "Active Power meter"}       // int32 ไฟที่ meter grid มาถ้า - คือจาก grid + คือย้อนออก
+	ReactivePowerMeter = ModbusRegister{37115, 2, 1, "var", "Reactive Power meter"}   // int32
+	PowerFactor        = ModbusRegister{37117, 1, 1000, "", "Power Factor"}           // int16
+	GridFreq           = ModbusRegister{37118, 1, 100, "Hz", "Grid Frequency"}        // int16
+	GridExportedEnergy = ModbusRegister{37119, 2, 100, "kWh", "Grid Exported Energy"} // int32 พลังงานที่ขายออก grid สะสม
+	GridImportedEnergy = ModbusRegister{37121, 2, 100, "kWh", "Grid Imported Energy"} // int32 พลังงานที่ซื้อจาก grid สะสม
 
 	// Battery / Energy Storage (LUNA2000 — ใช้ได้เฉพาะรุ่นที่ต่อแบตเตอรี่)
 	BatteryRunningStatus  = ModbusRegister{37762, 1, 0, "", "Battery Running Status"}          // uint16 (0 offline, 1 standby, 2 running, 3 fault, 4 sleep)

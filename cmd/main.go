@@ -55,12 +55,6 @@ func main() {
 		utils.PVPower,
 
 		// Inverter Output
-		utils.InverterVoltageAB,
-		utils.InverterVoltageBC,
-		utils.InverterVoltageCA,
-		utils.InverterVoltageA,
-		utils.InverterVoltageB,
-		utils.InverterVoltageC,
 		utils.InverterCurrentA,
 		utils.InverterCurrentB,
 		utils.InverterCurrentC,
@@ -90,9 +84,6 @@ func main() {
 		utils.GridFreq,
 		utils.GridExportedEnergy,
 		utils.GridImportedEnergy,
-		utils.GridActivePowerA,
-		utils.GridActivePowerB,
-		utils.GridActivePowerC,
 
 		// Battery / Energy Storage (LUNA2000)
 		utils.BatteryRunningStatus,
