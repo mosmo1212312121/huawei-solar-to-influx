@@ -1294,7 +1294,7 @@
               }
             ]
           },
-          "unit": "watt"
+          "unit": "amp"
         },
         "overrides": []
       },
@@ -1304,7 +1304,7 @@
         "x": 0,
         "y": 29
       },
-      "id": 11,
+      "id": 13,
       "options": {
         "legend": {
           "calcs": [
@@ -1326,7 +1326,7 @@
       "pluginVersion": "12.4.0",
       "targets": [
         {
-          "alias": "Phase A",
+          "alias": "A",
           "datasource": {
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
@@ -1354,7 +1354,7 @@
             [
               {
                 "params": [
-                  "Grid Phase A Active Power"
+                  "Inverter Phase A Current"
                 ],
                 "type": "field"
               },
@@ -1367,7 +1367,7 @@
           "tags": []
         },
         {
-          "alias": "Phase B",
+          "alias": "B",
           "datasource": {
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
@@ -1395,7 +1395,7 @@
             [
               {
                 "params": [
-                  "Grid Phase B Active Power"
+                  "Inverter Phase B Current"
                 ],
                 "type": "field"
               },
@@ -1408,7 +1408,7 @@
           "tags": []
         },
         {
-          "alias": "Phase C",
+          "alias": "C",
           "datasource": {
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
@@ -1436,7 +1436,7 @@
             [
               {
                 "params": [
-                  "Grid Phase C Active Power"
+                  "Inverter Phase C Current"
                 ],
                 "type": "field"
               },
@@ -1449,7 +1449,7 @@
           "tags": []
         }
       ],
-      "title": "Grid Active Power per Phase",
+      "title": "Inverter Phase Current",
       "type": "timeseries"
     },
     {
@@ -1759,553 +1759,6 @@
               }
             ]
           },
-          "unit": "amp"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 0,
-        "y": 38
-      },
-      "id": 13,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "min",
-            "max",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "pluginVersion": "12.4.0",
-      "targets": [
-        {
-          "alias": "A",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
-          },
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "previous"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "huawei_solar",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "Inverter Phase A Current"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "last"
-              }
-            ]
-          ],
-          "tags": []
-        },
-        {
-          "alias": "B",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
-          },
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "previous"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "huawei_solar",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "B",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "Inverter Phase B Current"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "last"
-              }
-            ]
-          ],
-          "tags": []
-        },
-        {
-          "alias": "C",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
-          },
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "previous"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "huawei_solar",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "C",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "Inverter Phase C Current"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "last"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "title": "Inverter Phase Current",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUXDB}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 15,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineWidth": 2,
-            "pointSize": 3,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          },
-          "unit": "volt"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 12,
-        "y": 38
-      },
-      "id": 12,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "min",
-            "max",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "pluginVersion": "12.4.0",
-      "targets": [
-        {
-          "alias": "A",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
-          },
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "previous"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "huawei_solar",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "Inverter Phase A Voltage"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "last"
-              }
-            ]
-          ],
-          "tags": []
-        },
-        {
-          "alias": "B",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
-          },
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "previous"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "huawei_solar",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "B",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "Inverter Phase B Voltage"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "last"
-              }
-            ]
-          ],
-          "tags": []
-        },
-        {
-          "alias": "C",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
-          },
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "previous"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "huawei_solar",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "C",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "Inverter Phase C Voltage"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "last"
-              }
-            ]
-          ],
-          "tags": []
-        },
-        {
-          "alias": "A-B",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
-          },
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "previous"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "huawei_solar",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "D",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "Inverter Voltage A-B"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "last"
-              }
-            ]
-          ],
-          "tags": []
-        },
-        {
-          "alias": "B-C",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
-          },
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "previous"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "huawei_solar",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "E",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "Inverter Voltage B-C"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "last"
-              }
-            ]
-          ],
-          "tags": []
-        },
-        {
-          "alias": "C-A",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
-          },
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "previous"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "huawei_solar",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "F",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "Inverter Voltage C-A"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "last"
-              }
-            ]
-          ],
-          "tags": []
-        }
-      ],
-      "title": "Inverter Phase Voltage",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUXDB}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 15,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineWidth": 2,
-            "pointSize": 3,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          },
           "unit": "none"
         },
         "overrides": []
@@ -2314,7 +1767,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 47
+        "y": 38
       },
       "id": 15,
       "options": {
@@ -2485,7 +1938,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 47
+        "y": 38
       },
       "id": 14,
       "options": {
@@ -2656,7 +2109,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 56
+        "y": 47
       },
       "id": 19,
       "options": {
@@ -2778,7 +2231,7 @@
               }
             ]
           },
-          "unit": "celsius"
+          "unit": "none"
         },
         "overrides": []
       },
@@ -2786,7 +2239,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 56
+        "y": 47
       },
       "id": 16,
       "options": {
@@ -2998,7 +2451,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 65
+        "y": 56
       },
       "id": 17,
       "options": {
@@ -3169,7 +2622,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 65
+        "y": 56
       },
       "id": 18,
       "options": {
@@ -3294,6 +2747,6 @@
   "timezone": "browser",
   "title": "My solar monitoring 1",
   "uid": "ad6lp6t",
-  "version": 2,
+  "version": 4,
   "weekStart": ""
 }
