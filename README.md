@@ -48,25 +48,19 @@ Register definitions [`internal/utils/register.go`](internal/utils/register.go).
 
 ### Inverter Output
 
-| Field                  | Register | Unit | Description                  |
-| ---------------------- | -------- | ---- | ---------------------------- |
-| Inverter Voltage A-B   | 32066    | V    | Line-to-line voltage A-B     |
-| Inverter Voltage B-C   | 32067    | V    | Line-to-line voltage B-C     |
-| Inverter Voltage C-A   | 32068    | V    | Line-to-line voltage C-A     |
-| Inverter Phase A Voltage | 32069  | V    | Phase A voltage              |
-| Inverter Phase B Voltage | 32070  | V    | Phase B voltage              |
-| Inverter Phase C Voltage | 32071  | V    | Phase C voltage              |
-| Inverter Phase A Current | 32072  | A    | Phase A current              |
-| Inverter Phase B Current | 32074  | A    | Phase B current              |
-| Inverter Phase C Current | 32076  | A    | Phase C current              |
-| Peak Active Power of Day | 32078  | W    | Peak active power today      |
-| Inverter Power         | 32080    | W    | AC output power from inverter|
-| Inverter Reactive Power| 32082    | kvar | Reactive power               |
-| Inverter Power Factor  | 32084    | —    | Inverter power factor        |
-| Inverter Frequency     | 32085    | Hz   | Inverter output frequency    |
-| Inverter Efficiency    | 32086    | %    | Conversion efficiency        |
-| Internal Temperature   | 32087    | °C   | Internal temperature         |
-| Insulation Resistance  | 32088    | MΩ   | Insulation resistance        |
+| Field                    | Register | Unit | Description                   |
+| ------------------------ | -------- | ---- | ----------------------------- |
+| Inverter Phase A Current | 32072    | A    | Phase A current               |
+| Inverter Phase B Current | 32074    | A    | Phase B current               |
+| Inverter Phase C Current | 32076    | A    | Phase C current               |
+| Peak Active Power of Day | 32078    | W    | Peak active power today       |
+| Inverter Power           | 32080    | W    | AC output power from inverter |
+| Inverter Reactive Power  | 32082    | kvar | Reactive power                |
+| Inverter Power Factor    | 32084    | —    | Inverter power factor         |
+| Inverter Frequency       | 32085    | Hz   | Inverter output frequency     |
+| Inverter Efficiency      | 32086    | %    | Conversion efficiency         |
+| Internal Temperature     | 32087    | °C   | Internal temperature          |
+| Insulation Resistance    | 32088    | MΩ   | Insulation resistance         |
 
 ### Energy Yield
 
@@ -91,9 +85,6 @@ Register definitions [`internal/utils/register.go`](internal/utils/register.go).
 | Grid Frequency           | 37118    | Hz   | Grid frequency                               |
 | Grid Exported Energy     | 37119    | kWh  | Cumulative energy exported to grid           |
 | Grid Imported Energy     | 37121    | kWh  | Cumulative energy imported from grid         |
-| Grid Phase A Active Power| 37132    | W    | Grid active power phase A                     |
-| Grid Phase B Active Power| 37134    | W    | Grid active power phase B                     |
-| Grid Phase C Active Power| 37136    | W    | Grid active power phase C                     |
 
 ### Battery / Energy Storage (LUNA2000)
 
